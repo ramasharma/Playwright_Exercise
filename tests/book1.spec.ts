@@ -1,14 +1,19 @@
 import { test, expect } from '@playwright/test';
-
+// Runs before each test
 test.beforeEach(async ({ page }) => {
-  await page.goto('https://books.toscrape.com/');
+// Navigate to the homepage
+ await page.goto('https://books.toscrape.com/');
+// Wait until network is idle to reduce flakiness
+await page.waitForLoadState('networkidle');
 });
 
 /* -------------------------------
 1. HOME PAGE TITLE
 --------------------------------*/
 test('Verify homepage title contains "Books" - top', async ({ page }) => {
-  await expect(page.locator('.side_categories')).toContainText('Books');
+  // Flakiness: page may not be fully loaded
+    // Fix: wait for load state before checking title
+  await expect(page).toHaveTitle(/Books/);
 });
 
 /* -------------------------------
@@ -74,4 +79,29 @@ test('Verify fields of the first book (bonus)', async ({ page }) => {
   await expect(price).toBeVisible();
   await expect(description).toBeVisible();
   await expect(category).toBeVisible();
+/**
+ * Notes on potential flakiness and fixes:
+ *
+ * 1. Page load timing:
+ *    - Some tests check titles or elements immediately after navigation:
+ *      `await expect(page).toHaveTitle(/Books/);`
+ *    - Fix: Used `await page.waitForLoadState('networkidle')` in beforeEach to ensure page fully loads.
+ *
+ * 2. goBack navigation:
+ *    - Navigating back repeatedly in loops may fail if page loads slowly:
+ *      `await page.goBack();`
+ *    - Fix: Could add `await page.goBack({ waitUntil: 'networkidle' })` if needed.
+ *
+ * 3. Dynamic site content:
+ *    - Book listings may change over time, causing assertion failures:
+ *      `const count = await page.locator('.product_pod').count();`
+ *    - Fix: Focus assertions on stable elements like category headers or breadcrumbs rather than number of books.
+ *
+ * 4. Breadcrumb checks:
+ *    - Assuming the category is always at `.breadcrumb li:nth(2)` may break if layout changes:
+ *      `const category = page.locator('.breadcrumb li').nth(2);`
+ *    - Fix: Currently works for the current site structure.
+ */
+
+
 });
