@@ -23,10 +23,9 @@
 
 ### Install Dependencies
 - Make sure Node.js (v16+) is installed, then run: npm install
-### Install Playwright browsers: npx playwright install
-
-### Run a single test file:npx playwright test tests/Book.spec.ts
-### View HTML Report:npx playwright show-report
+- Install Playwright browsers: npx playwright install
+- Run a single test file: npx playwright test tests/Book.spec.ts
+-  View HTML Report: npx playwright show-report
 
 
 
