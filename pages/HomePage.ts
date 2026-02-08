@@ -17,6 +17,7 @@ export class HomePage {
 
   async goto() {
     await this.page.goto('https://books.toscrape.com/');
+    await this.page.waitForTimeout(3000);
   }
 
   async openTravelCategory() {
